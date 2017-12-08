@@ -32,7 +32,7 @@ For patientIndex = 1 To patientCount
   patientPart = Dir(rootPath & "\" & patientName & "\", vbDirectory)
   partCount = 0
   Do While Len(patientPart)
-    If patientPart <> "." And patientPart <> ".." Then
+    If patientPart <> "." And patientPart <> ".." And (GetAttr(rootPath & "\" & patientName & "\" & patientPart) And vbDirectory) = vbDirectory Then
       partCount = partCount + 1
       ReDim Preserve patientParts(1 To partCount)
       patientParts(partCount) = patientPart
