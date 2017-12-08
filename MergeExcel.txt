@@ -14,7 +14,7 @@ Application.ScreenUpdating = False
 rootPath = ActiveWorkbook.Path
 mergedFileName = ActiveWorkbook.Name
 
-MsgBox "根目录是: " & rootPath & " 合并后文件是: " & mergedFileName
+MsgBox "鏍圭洰褰曟槸: " & rootPath & " 鍚堝苟鍚庢枃浠舵槸: " & mergedFileName
 
 patientName = Dir(rootPath & "\", vbDirectory)
 patientCount = 0
