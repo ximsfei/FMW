@@ -1,0 +1,77 @@
+Sub mergeAllSubdirExcel()
+Dim rootPath, mergedFileName, excelFile, patientName, patientPart
+Dim patientNames() As String
+Dim patientCount As Long
+Dim patientIndex As Long
+Dim patientParts() As String
+Dim partCount As Long
+Dim partIndex As Long
+Dim sheetIndex As Long
+Dim wb As workbook
+Dim fileNum As Long
+
+Application.ScreenUpdating = False
+rootPath = ActiveWorkbook.Path
+mergedFileName = ActiveWorkbook.Name
+
+MsgBox "根目录是: " & rootPath & " 合并后文件是: " & mergedFileName
+
+patientName = Dir(rootPath & "\", vbDirectory)
+patientCount = 0
+Do While Len(patientName)
+  If patientName <> "." And patientName <> ".." And patientName <> mergedFileName Then
+    patientCount = patientCount + 1
+    ReDim Preserve patientNames(1 To patientCount)
+    patientNames(patientCount) = patientName
+  End If
+  patientName = Dir
+Loop
+fileNum = 0
+For patientIndex = 1 To patientCount
+  patientName = patientNames(patientIndex)
+  patientPart = Dir(rootPath & "\" & patientName & "\", vbDirectory)
+  partCount = 0
+  Do While Len(patientPart)
+    If patientPart <> "." And patientPart <> ".." Then
+      partCount = partCount + 1
+      ReDim Preserve patientParts(1 To partCount)
+      patientParts(partCount) = patientPart
+    End If
+    patientPart = Dir
+  Loop
+  For partIndex = 1 To partCount
+    patientPart = patientParts(partIndex)
+    excelFile = Dir(rootPath & "\" & patientName & "\" & patientPart & "\" & "*.csv")
+    Do While Len(excelFile)
+      Set wb = Workbooks.Open(rootPath & "\" & patientName & "\" & patientPart & "\" & excelFile)
+      fileNum = fileNum + 1
+      With Workbooks(1).ActiveSheet
+        For sheetIndex = 1 To Sheets.Count
+          If fileNum = 1 Then
+            wb.Sheets(sheetIndex).Columns(1).Insert
+            wb.Sheets(sheetIndex).Range("A1") = "Parts"
+            wb.Sheets(sheetIndex).Range("A2") = patientPart
+            wb.Sheets(sheetIndex).Columns(1).Insert
+            wb.Sheets(sheetIndex).Range("A1") = "Name"
+            wb.Sheets(sheetIndex).Range("A2") = patientName
+          Else
+            wb.Sheets(sheetIndex).Rows("1:1").Select
+            Selection.Delete Shift:=xlUp
+            wb.Sheets(sheetIndex).Columns(1).Insert
+            wb.Sheets(sheetIndex).Range("A1") = patientPart
+            wb.Sheets(sheetIndex).Columns(1).Insert
+            wb.Sheets(sheetIndex).Range("A1") = patientName
+          End If
+          wb.Sheets(sheetIndex).UsedRange.Copy .Cells(.Range("B65536").End(xlUp).Row + 1, 1)
+        Next
+        wb.Close False
+      End With
+      excelFile = Dir
+    Loop
+    Range("B1").Select
+  Next
+Next
+Workbooks(1).ActiveSheet.Rows("1:1").Select
+Selection.Delete Shift:=xlUp
+Application.ScreenUpdating = True
+End Sub
