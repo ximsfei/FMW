@@ -54,7 +54,6 @@ For patientIndex = 1 To patientCount
             wb.Sheets(sheetIndex).Columns(1).Insert
             wb.Sheets(sheetIndex).Range("A1") = "Name"
             wb.Sheets(sheetIndex).Range("A2") = patientName
-            wb.Sheets(sheetIndex).UsedRange.Copy .Cells(.Range("B65536").End(xlUp).Row, 1)
           Else
             wb.Sheets(sheetIndex).Rows("1:1").Select
             Selection.Delete Shift:=xlUp
@@ -62,8 +61,8 @@ For patientIndex = 1 To patientCount
             wb.Sheets(sheetIndex).Range("A1") = patientPart
             wb.Sheets(sheetIndex).Columns(1).Insert
             wb.Sheets(sheetIndex).Range("A1") = patientName
-            wb.Sheets(sheetIndex).UsedRange.Copy .Cells(.Range("B65536").End(xlUp).Row + 1, 1)
           End If
+          wb.Sheets(sheetIndex).UsedRange.Copy .Cells(.Range("B65536").End(xlUp).Row + 1, 1)
         Next
         wb.Close False
       End With
